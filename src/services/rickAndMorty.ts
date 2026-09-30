@@ -1,6 +1,6 @@
 import type { APIResponse } from '../types/character';
 
-const BASE_URL = 'https://rickandmortyapi.com/api';
+const BASE_URL = '/api/characters';
 const REQUEST_TIMEOUT_MS = 8000;
 const MAX_ATTEMPTS = 2;
 
@@ -9,8 +9,9 @@ const MAX_ATTEMPTS = 2;
  * @param page Número de página a consultar (default: 1)
  * @param name Filtro opcional por nombre
  */
-export async function getCharacters(page: number = 1, name: string = ''): Promise<APIResponse> {
-  const url = new URL(`${BASE_URL}/character`);
+export async function getCharacters(page: number = 1, name: string = '', origin?: string): Promise<APIResponse> {
+  const requestOrigin = origin ?? window.location.origin;
+  const url = new URL(BASE_URL, requestOrigin);
   url.searchParams.append('page', page.toString());
 
   if (name.trim() !== '') {
