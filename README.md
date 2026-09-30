@@ -46,7 +46,8 @@ El proyecto utiliza el modo estático predeterminado de Astro. La API debe estar
 - Los fallos de red y los timeouts disponen de un reintento automático antes de mostrar el estado de error.
 - Las respuestas HTTP 404 se interpretan como un resultado vacío para las búsquedas sin coincidencias.
 - Los filtros de estado y especie se envían a la API para evitar descargar y filtrar datos innecesarios en el cliente.
-- El modo oscuro se controla desde React, respeta la preferencia del sistema y conserva la elección del usuario en `localStorage`.
+- La búsqueda se actualiza automáticamente mientras el usuario escribe, con un debounce de 450 ms; el botón Buscar continúa disponible para consultas explícitas.
+- El modo oscuro se controla desde React, inicia siempre en modo claro y se activa únicamente cuando el usuario lo selecciona.
 - No se utiliza un proxy interno en la versión actual; el consumo directo funciona con la API pública y evita añadir infraestructura innecesaria al proyecto.
 
 ## Estructura del proyecto

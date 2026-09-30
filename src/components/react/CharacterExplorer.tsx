@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { getCharacters } from '../../services/rickAndMorty';
 import type { APIResponse, Character } from '../../types/character';
 
@@ -19,6 +19,8 @@ const genderLabels: Record<Character['gender'], string> = {
 	Genderless: 'Sin género',
 	unknown: 'Desconocido',
 };
+
+const speciesOptions = ['Human', 'Alien', 'Humanoid', 'Animal', 'Robot', 'Mythological Creature', 'Poopybutthole', 'unknown'];
 
 function CharacterCard({ character }: { character: Character }) {
 	return (
@@ -61,6 +63,7 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 	const [activeSpecies, setActiveSpecies] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(initialError);
+	const hasMounted = useRef(false);
 
 	async function loadPage(
 		page: number,
@@ -97,6 +100,19 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 		void loadPage(currentPage, activeQuery, activeStatus, activeSpecies);
 	}
 
+	useEffect(() => {
+		if (!hasMounted.current) {
+			hasMounted.current = true;
+			return;
+		}
+
+		const timeoutId = window.setTimeout(() => {
+			void loadPage(1, query.trim(), status, species);
+		}, 450);
+
+		return () => window.clearTimeout(timeoutId);
+	}, [query, status, species]);
+
 	return (
 		<div className="explorer" aria-busy={isLoading}>
 			<form className="search-form" onSubmit={handleSearch} role="search">
@@ -126,14 +142,17 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 					</div>
 					<div className="filter-control">
 						<label htmlFor="character-species">Especie</label>
-						<input
+						<select
 							id="character-species"
 							name="species"
-							type="search"
-							placeholder="Ej. Human"
 							value={species}
 							onChange={(event) => setSpecies(event.currentTarget.value)}
-						/>
+						>
+							<option value="">Todas las especies</option>
+							{speciesOptions.map((speciesOption) => (
+								<option key={speciesOption} value={speciesOption}>{speciesOption}</option>
+							))}
+						</select>
 					</div>
 					<button className="button button--dark" type="submit" disabled={isLoading}>
 						Buscar <span aria-hidden="true">↗</span>

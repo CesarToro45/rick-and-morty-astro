@@ -12,6 +12,9 @@
 	--line: #d8dbd0;
 	--acid: #c5ed66;
 	--orange: #ef704b;
+	--button-dark-bg: #20231c;
+	--button-dark-text: #ffffff;
+	--error: #9a321f;
 }
 
 :root[data-theme='dark'] {
@@ -22,6 +25,9 @@
 	--line: #394237;
 	--acid: #647a32;
 	--orange: #f18a62;
+	--button-dark-bg: #e8f1d8;
+	--button-dark-text: #172016;
+	--error: #ffb29a;
 }
 
 * { box-sizing: border-box; }
@@ -38,7 +44,6 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .wordmark { font-size: 24px; font-weight: 950; text-decoration: none; }
 .wordmark > span:first-child { color: #687f31; }
 .wordmark__dot { color: var(--orange); }
-.site-header nav { display: flex; gap: 26px; }
 .site-header nav { display: flex; align-items: center; gap: 26px; }
 .site-header nav a, .site-footer a { font-size: 13px; font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .theme-toggle { min-height: 36px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 0; background: transparent; color: var(--ink); font-size: 11px; font-weight: 800; cursor: pointer; }
@@ -75,7 +80,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .filter-control select { min-height: 48px; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 104px; min-height: 44px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 0; font-size: 12px; font-weight: 800; cursor: pointer; }
 .button:disabled { cursor: not-allowed; opacity: 0.45; }
-.button--dark { background: var(--ink); color: white; }
+.button--dark { background: var(--button-dark-bg); color: var(--button-dark-text); }
 .button--outline { background: transparent; color: var(--ink); }
 .button:not(:disabled):hover { background: var(--orange); color: var(--ink); }
 
@@ -95,7 +100,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .character-card__details dt { margin-bottom: 4px; color: var(--muted); font-size: 10px; }
 .character-card__details dd { margin: 0; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
 .state-message { padding: 28px 0; color: var(--muted); font-size: 14px; }
-.state-message--error { display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #9a321f; }
+.state-message--error { display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--error); }
 .state-message--error p { margin: 0; }
 .pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
 .pagination p { margin: 0; color: var(--muted); font-size: 12px; }
