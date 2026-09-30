@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CharacterExplorer from '../components/react/CharacterExplorer';
+import { getCharacters } from '../services/rickAndMorty';
+import type { APIResponse } from '../types/character';
+
+let initialResponse: APIResponse | null = null;
+let initialError = false;
+
+try {
+	initialResponse = await getCharacters();
+} catch (error) {
+	initialError = true;
+	console.error('No fue posible cargar los personajes iniciales:', error);
+}
+
+const featuredCharacter = initialResponse?.results[0];
+const characterCount = initialResponse?.info.count;
+---
+
+<Layout>
+	<header class="site-header">
+		<a class="wordmark" href="#top" aria-label="Rick and Morty, inicio">R<span>&amp;</span>M<span class="wordmark__dot">.</span></a>
+		<nav aria-label="Navegación principal">
+			<a href="#characters">Personajes</a>
+		</nav>
+	</header>
+
+	<main id="main-content">
+		<section class="hero" id="top" aria-labelledby="hero-title">
+			<div class="hero__copy">
+				<p class="eyebrow"><span class="signal" aria-hidden="true"></span> Archivo interdimensional / Tierra C-137</p>
+				<h1 id="hero-title">Rick<br />&amp; Morty<span class="hero__period">.</span></h1>
+				<p class="hero__description">Una pequeña ventana a un universo demasiado grande. Explora las fichas de sus habitantes.</p>
+				<a class="hero__link" href="#characters">Explorar personajes <span aria-hidden="true">↓</span></a>
+			</div>
+			<div class="hero__visual" aria-label={featuredCharacter ? `Personaje destacado: ${featuredCharacter.name}` : 'Archivo de personajes'}>
+				<div class="hero__index" aria-hidden="true">DIM<br />001</div>
+				{featuredCharacter && (
+					<img
+						class="hero__portrait"
+						src={featuredCharacter.image}
+						alt={`Retrato de ${featuredCharacter.name}`}
+						width="300"
+						height="300"
+						fetchpriority="high"
+						decoding="async"
+					/>
+					<p class="hero__caption">Registro destacado <span>{featuredCharacter.name}</span></p>
+				)}
+				<div class="hero__orbit" aria-hidden="true"></div>
+			</div>
+			<div class="hero__meta" aria-label="Datos del archivo">
+				<span>Portal de consulta</span>
+				<span>{characterCount ? `${characterCount.toLocaleString('es-MX')} registros` : 'Multiverso abierto'}</span>
+				<span>Portal activo <i aria-hidden="true"></i></span>
+			</div>
+		</section>
+
+		<section class="catalog" id="characters" aria-labelledby="catalog-title">
+			<div class="catalog__heading">
+				<div>
+					<p class="eyebrow">Explorador de especies / 01</p>
+					<h2 id="catalog-title">Archivo de personajes</h2>
+				</div>
+				<p class="catalog__note">El multiverso nunca se queda quieto.</p>
+			</div>
+			<CharacterExplorer client:visible initialResponse={initialResponse} initialError={initialError} />
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<span>Un archivo del multiverso, sin garantía de supervivencia.</span>
+		<a href="https://rickandmortyapi.com/" target="_blank" rel="noreferrer">Datos: Rick and Morty API ↗</a>
+	</footer>
+</Layout>

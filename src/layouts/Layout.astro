@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'Rick & Morty | Archivo interdimensional',
+	description = 'Explora personajes del universo de Rick and Morty. Fichas actualizadas desde la API oficial, con búsqueda y paginación.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#c5ed66" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content="https://rickandmortyapi.com/api/character/avatar/1.jpeg" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">Saltar al contenido</a>
+		<slot />
+	</body>
+</html>
