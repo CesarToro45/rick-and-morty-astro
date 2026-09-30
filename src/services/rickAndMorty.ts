@@ -1,6 +1,8 @@
 import type { APIResponse } from '../types/character';
 
 const BASE_URL = 'https://rickandmortyapi.com/api';
+const REQUEST_TIMEOUT_MS = 8000;
+const MAX_ATTEMPTS = 2;
 
 /**
  * Obtiene la lista paginada de personajes desde la API oficial.
@@ -15,7 +17,23 @@ export async function getCharacters(page: number = 1, name: string = ''): Promis
     url.searchParams.append('name', name.trim());
   }
 
-  const response = await fetch(url.toString());
+  let response: Response;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+      response = await fetch(url.toString(), { signal: controller.signal });
+      break;
+    } catch (error) {
+      if (attempt === MAX_ATTEMPTS) {
+        throw error;
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 404) {

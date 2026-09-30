@@ -82,6 +82,10 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 		void loadPage(1, query.trim());
 	}
 
+	function handleRetry() {
+		void loadPage(currentPage, query.trim());
+	}
+
 	return (
 		<div className="explorer" aria-busy={isLoading}>
 			<form className="search-form" onSubmit={handleSearch} role="search">
@@ -106,7 +110,7 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 			{hasError && (
 				<div className="state-message state-message--error" role="alert">
 					<p>No se pudo conectar con la API. Comprueba tu conexión e inténtalo de nuevo.</p>
-					<button className="button button--outline" type="button" onClick={() => void loadPage(currentPage, activeQuery)}>
+					<button className="button button--outline" type="button" onClick={handleRetry} disabled={isLoading}>
 						Reintentar
 					</button>
 				</div>
