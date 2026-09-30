@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CharacterExplorer from '../components/react/CharacterExplorer';
+import ThemeToggle from '../components/react/ThemeToggle';
 import { getCharacters } from '../services/rickAndMorty';
 import type { APIResponse } from '../types/character';
 
@@ -23,6 +24,7 @@ const characterCount = initialResponse?.info.count;
 		<a class="wordmark" href="#top" aria-label="Rick and Morty, inicio">R<span>&amp;</span>M<span class="wordmark__dot">.</span></a>
 		<nav aria-label="Navegación principal">
 			<a href="#characters">Personajes</a>
+			<ThemeToggle client:load />
 		</nav>
 	</header>
 

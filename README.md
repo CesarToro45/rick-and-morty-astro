@@ -1,6 +1,12 @@
 # Rick & Morty: Archivo interdimensional
 
-Landing responsive para explorar personajes de Rick and Morty. La primera página se obtiene de la API oficial y se prerenderiza con Astro; búsqueda y paginación consultan la API desde el navegador.
+Landing responsive para explorar personajes de Rick and Morty. La primera página se obtiene de la API oficial y se prerenderiza con Astro; búsqueda y paginación consultan la API desde el navegador mediante una isla interactiva de React.
+
+## Enlaces del proyecto
+
+- Repositorio: [github.com/CesarToro45/rick-and-morty-astro](https://github.com/CesarToro45/rick-and-morty-astro)
+- Demo: [rick-and-morty-astro-woad.vercel.app](https://rick-and-morty-astro-woad.vercel.app)
+- API: [rickandmortyapi.com](https://rickandmortyapi.com/)
 
 ## Requisitos
 
@@ -23,14 +29,25 @@ npm run build
 npm run preview
 ```
 
-El proyecto utiliza el modo estático predeterminado de Astro. La API debe estar disponible durante el build para incluir los primeros personajes en el HTML generado.
+El proyecto utiliza el modo estático predeterminado de Astro. La API debe estar disponible durante el build para incluir los primeros personajes en el HTML generado. La demo publicada se sirve desde Vercel.
 
 ## Tecnologías
 
 - Astro para páginas, layout, SEO y renderizado inicial.
-- React y TypeScript para búsqueda, paginación y estados interactivos del explorador.
+- React y TypeScript para búsqueda, filtros, paginación, modo oscuro y estados interactivos del explorador.
 - Rick and Morty API para los datos e imágenes de personajes.
 - CSS tradicional para estilos responsive y estados de foco.
+
+## Estrategia de conexión
+
+- La carga inicial se realiza durante el build de Astro para entregar contenido visible desde el HTML generado.
+- Las búsquedas y cambios de página se realizan desde React contra la API oficial.
+- Cada petición tiene un timeout de 8 segundos mediante `AbortController`.
+- Los fallos de red y los timeouts disponen de un reintento automático antes de mostrar el estado de error.
+- Las respuestas HTTP 404 se interpretan como un resultado vacío para las búsquedas sin coincidencias.
+- Los filtros de estado y especie se envían a la API para evitar descargar y filtrar datos innecesarios en el cliente.
+- El modo oscuro se controla desde React, respeta la preferencia del sistema y conserva la elección del usuario en `localStorage`.
+- No se utiliza un proxy interno en la versión actual; el consumo directo funciona con la API pública y evita añadir infraestructura innecesaria al proyecto.
 
 ## Estructura del proyecto
 
@@ -44,9 +61,9 @@ El proyecto utiliza el modo estático predeterminado de Astro. La API debe estar
 │   └── favicon.svg
 ├── src/
 │   ├── components/
-│   │   ├── astro/ (vacío)
 │   │   └── react/
-│   │       └── CharacterExplorer.tsx
+│   │       ├── CharacterExplorer.tsx
+│   │       └── ThemeToggle.tsx
 │   ├── layouts/
 │   │   └── Layout.astro
 │   ├── pages/
@@ -79,8 +96,9 @@ El árbol muestra los archivos fuente y de configuración. Se omiten `node_modul
 - Las imágenes tienen dimensiones declaradas para reservar espacio, carga diferida en las fichas y decodificación asíncrona. El retrato destacado prioriza la carga.
 - Se incluyen etiquetas semánticas, textos alternativos, etiquetas de formulario, navegación por teclado, foco visible y metadatos Open Graph.
 
-## Con más tiempo
+## Mejoras futuras
 
 - Añadir pruebas automatizadas para los estados de búsqueda, paginación, error y resultados vacíos.
 - Medir accesibilidad, rendimiento y Core Web Vitals en una demo desplegada; evaluar optimización de imágenes si el hosting permite servirlas localmente.
-- Configurar una plataforma de despliegue y una estrategia de actualización del HTML estático para reflejar nuevos datos de la API.
+- Mejorar la resiliencia de la conexión con una capa proxy o una función server-side que permita centralizar caché, reintentos y control de disponibilidad sin depender de la conexión directa del cliente.
+- Evaluar una estrategia de actualización del HTML estático para reflejar nuevos datos de la API sin depender exclusivamente del momento del build.

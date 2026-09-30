@@ -1,4 +1,4 @@
-import type { APIResponse } from '../types/character';
+import type { APIResponse, Character } from '../types/character';
 
 const BASE_URL = 'https://rickandmortyapi.com/api';
 const REQUEST_TIMEOUT_MS = 8000;
@@ -9,7 +9,12 @@ const MAX_ATTEMPTS = 2;
  * @param page Número de página a consultar (default: 1)
  * @param name Filtro opcional por nombre
  */
-export async function getCharacters(page: number = 1, name: string = ''): Promise<APIResponse> {
+export async function getCharacters(
+  page: number = 1,
+  name: string = '',
+  status: Character['status'] | '' = '',
+  species: string = '',
+): Promise<APIResponse> {
   const url = new URL(`${BASE_URL}/character`);
   url.searchParams.append('page', page.toString());
 
@@ -17,7 +22,15 @@ export async function getCharacters(page: number = 1, name: string = ''): Promis
     url.searchParams.append('name', name.trim());
   }
 
-  let response: Response;
+  if (status !== '') {
+    url.searchParams.append('status', status.toLowerCase());
+  }
+
+  if (species.trim() !== '') {
+    url.searchParams.append('species', species.trim());
+  }
+
+  let response: Response | null = null;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     const controller = new AbortController();
@@ -33,6 +46,10 @@ export async function getCharacters(page: number = 1, name: string = ''): Promis
     } finally {
       clearTimeout(timeoutId);
     }
+  }
+
+  if (response === null) {
+    throw new Error('No se recibió una respuesta de la API.');
   }
 
   if (!response.ok) {

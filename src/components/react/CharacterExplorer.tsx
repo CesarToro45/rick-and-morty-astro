@@ -55,19 +55,30 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 	const [pageCount, setPageCount] = useState(initialResponse?.info.pages ?? 0);
 	const [query, setQuery] = useState('');
 	const [activeQuery, setActiveQuery] = useState('');
+	const [status, setStatus] = useState<Character['status'] | ''>('');
+	const [species, setSpecies] = useState('');
+	const [activeStatus, setActiveStatus] = useState<Character['status'] | ''>('');
+	const [activeSpecies, setActiveSpecies] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(initialError);
 
-	async function loadPage(page: number, name: string) {
+	async function loadPage(
+		page: number,
+		name: string,
+		statusFilter: Character['status'] | '' = activeStatus,
+		speciesFilter: string = activeSpecies,
+	) {
 		setIsLoading(true);
 		setHasError(false);
 
 		try {
-			const response = await getCharacters(page, name);
+			const response = await getCharacters(page, name, statusFilter, speciesFilter);
 			setCharacters(response.results);
 			setCurrentPage(page);
 			setPageCount(response.info.pages);
 			setActiveQuery(name);
+			setActiveStatus(statusFilter);
+			setActiveSpecies(speciesFilter);
 		} catch {
 			setCharacters([]);
 			setPageCount(0);
@@ -79,11 +90,11 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 
 	function handleSearch(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		void loadPage(1, query.trim());
+		void loadPage(1, query.trim(), status, species);
 	}
 
 	function handleRetry() {
-		void loadPage(currentPage, query.trim());
+		void loadPage(currentPage, activeQuery, activeStatus, activeSpecies);
 	}
 
 	return (
@@ -99,6 +110,31 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 						value={query}
 						onChange={(event) => setQuery(event.currentTarget.value)}
 					/>
+					<div className="filter-control">
+						<label htmlFor="character-status">Estado</label>
+						<select
+							id="character-status"
+							name="status"
+							value={status}
+							onChange={(event) => setStatus(event.currentTarget.value as Character['status'] | '')}
+						>
+							<option value="">Todos los estados</option>
+							<option value="Alive">Vivo</option>
+							<option value="Dead">Fallecido</option>
+							<option value="unknown">Desconocido</option>
+						</select>
+					</div>
+					<div className="filter-control">
+						<label htmlFor="character-species">Especie</label>
+						<input
+							id="character-species"
+							name="species"
+							type="search"
+							placeholder="Ej. Human"
+							value={species}
+							onChange={(event) => setSpecies(event.currentTarget.value)}
+						/>
+					</div>
 					<button className="button button--dark" type="submit" disabled={isLoading}>
 						Buscar <span aria-hidden="true">↗</span>
 					</button>
@@ -132,7 +168,7 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 							className="button button--outline"
 							type="button"
 							disabled={isLoading || currentPage <= 1}
-							onClick={() => void loadPage(currentPage - 1, activeQuery)}
+							onClick={() => void loadPage(currentPage - 1, activeQuery, activeStatus, activeSpecies)}
 						>
 							<span aria-hidden="true">←</span> Anterior
 						</button>
@@ -141,7 +177,7 @@ export default function CharacterExplorer({ initialResponse, initialError }: Pro
 							className="button button--outline"
 							type="button"
 							disabled={isLoading || currentPage >= pageCount}
-							onClick={() => void loadPage(currentPage + 1, activeQuery)}
+							onClick={() => void loadPage(currentPage + 1, activeQuery, activeStatus, activeSpecies)}
 						>
 							Siguiente <span aria-hidden="true">→</span>
 						</button>
