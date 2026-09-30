@@ -8,7 +8,7 @@ let initialResponse: APIResponse | null = null;
 let initialError = false;
 
 try {
-	initialResponse = await getCharacters(1, '', Astro.url.origin);
+	initialResponse = await getCharacters();
 } catch (error) {
 	initialError = true;
 	console.error('No fue posible cargar los personajes iniciales:', error);
